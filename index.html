@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Για την ΖΟΥΖΑΝΝΑ με αγαπη 💞</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #ff9ae0, #b385ff);
+    overflow: hidden;
+    color: #fff;
+    text-align: center;
+    height: 100vh;
+  }
+  h1, h2 { text-shadow: 0 0 15px rgba(255,255,255,0.6); }
+  .container { position: relative; top: 10%; width: 90%; margin: auto; max-width: 600px; }
+  .quiz, .main-question, .secret, .gift-section, .love-letter { display: none; }
+  button {
+    background: #ff66b2;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 1.2em;
+    padding: 10px 25px;
+    margin: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover { background: #ff3399; transform: scale(1.1); }
+
+  /* Floating hearts */
+  .hearts { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+  .heart { position: absolute; color: rgba(255, 255, 255, 0.7); animation: float 6s linear infinite; }
+  @keyframes float { from {transform: translateY(100vh) scale(0);} to {transform: translateY(-10vh) scale(1);} }
+
+  .floating-text { 
+    position: relative; 
+    animation: floatText 0.5s ease-in-out forwards;
+    font-size: 1.2em; 
+    color: #fff; 
+    text-shadow: 0 0 10px #ffb6f9; 
+    margin: 15px 0;
+  }
+  @keyframes floatText { 0% {opacity:0; transform:translateY(10px);} 100% {opacity:1; transform:translateY(0);} }
+
+  .love-bar { width: 80%; height: 20px; background: #fff3; border-radius: 20px; margin: 20px auto; overflow: hidden; }
+  .love-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff99cc, #ff33cc); border-radius: 20px; transition: width 0.5s ease; }
+
+  /* Gift moved to 25% of screen width (middle of first half) */
+  .gift-section {
+    display: none;
+    position: absolute;
+    left: -10%;
+    top: 20%;
+    transform: translateX(-50%);
+    cursor: pointer;
+  }
+  .gift { font-size: 5em; animation: pop 0.7s ease; }
+  .gift-label { font-size: 1.3em; margin-top: 10px; }
+
+  textarea { width: 90%; height: 120px; border-radius: 10px; border: none; padding: 10px; resize: none; }
+
+  #countdown { display:none; font-size:1.2em; margin-top:20px; }
+</style>
+</head>
+<body>
+
+<div class="hearts"></div>
+
+<div class="container">
+  <h1 id="quizTitle">💘 QUIZ 💘</h1>
+
+  <!-- Quiz -->
+  <div class="quiz" id="quiz1">
+    <h2>1️⃣ Πότε είναι η επέτειος μας;</h2>
+    <button onclick="nextQuiz(this, true)">06/08</button>
+    <button onclick="nextQuiz(this)">27/07</button>
+    <button onclick="nextQuiz(this)">18/09</button>
+  </div>
+
+  <div class="quiz" id="quiz2">
+    <h2>2️⃣ Πού γνωριστήκαμε;</h2>
+    <button onclick="nextQuiz(this)">Στο καφέ</button>
+    <button onclick="nextQuiz(this)">Σε πανηγύρι</button>
+    <button onclick="nextQuiz(this, true)">Στη θάλασσα</button>
+  </div>
+
+  <div class="quiz" id="quiz3">
+    <h2>3️⃣ Ποιο είναι το αγαπημένο μου τραγούδι που μου έχεις αφιερώσει;</h2>
+    <button onclick="nextQuiz(this, true)">Ένα φιλί από δυόσμο</button>
+    <button onclick="nextQuiz(this)">Να κοιμηθούμε αγκαλιά</button>
+    <button onclick="nextQuiz(this)">Sparks</button>
+  </div>
+
+  <div class="quiz" id="quiz4">
+    <h2>4️⃣ Ποιος είπε "Σ’ αγαπώ" πρώτος;</h2>
+    <button onclick="nextQuiz(this)">Εσύ</button>
+    <button onclick="nextQuiz(this, true)">Εγώ 😏</button>
+  </div>
+
+  <!-- Main question -->
+  <div class="main-question" id="mainQ">
+    <h2>3 μήνες μαζί και θέλω να επιβεβαιώσω...  
+      θέλεις να συνεχίσεις να εισαι το κοριτσι μου; 💞</h2>
+    <div style="position: relative; height: 80px;">
+      <button id="yesBtn" onclick="yesClicked()" style="position: absolute; left: 40%; transform: translateX(-50%); z-index: 2;">Ναι 💖</button>
+      <button id="noBtn" onmouseover="moveNo()" style="position: absolute; left: 50%; top: 0; z-index: 1;">Όχι 💔</button>
+
+    </div>
+    <div class="floating-text" id="floatText" style="display:none;">Ξαναπάτα με 😍</div>
+    <div class="love-bar"><div class="love-fill" id="loveFill"></div></div>
+  </div>
+
+  <!-- Secret input -->
+  <div class="secret" id="secretBox">
+    <h3>🔒 Θες να ξεκλειδώσεις κάτι;</h3>
+    <input type="text" id="secretInput" placeholder="Γράψε τον κωδικό...">
+    <button onclick="checkSecret()">Υποβολή</button>
+    <p id="secretMsg"></p>
+  </div>
+
+  <!-- Love letter -->
+  <div class="love-letter" id="loveLetter">
+    <h2>💌 Μυστικό Μήνυμα 💌</h2>
+    <p>Αν έφτασες ως εδώ, σημαίνει πως πραγματικά με αγαπάς.<br>
+    Κι εγώ σ’ αγαπάω περισσότερο απ’ όσο φαντάζεσαι 💞</p>
+  </div>
+
+  <!-- Gift -->
+  <div class="gift-section" id="gift" onclick="explodeHearts()">
+    <div class="gift">🎁</div>
+    <div class="gift-label">Σου έχω ένα δωράκιι! 💝</div>
+  </div>
+
+  <!-- Countdown -->
+  <div id="countdown"></div>
+</div>
+
+<audio id="music" src="https://cdn.pixabay.com/download/audio/2022/02/23/audio_2b9d0c772b.mp3?filename=romantic-background-ambient-11278.mp3"></audio>
+
+<script>
+let currentQuiz = 1;
+document.getElementById("quiz1").style.display = "block";
+const heartsContainer = document.querySelector('.hearts');
+
+function createHeart() {
+  const heart = document.createElement('div');
+  heart.classList.add('heart');
+  heart.textContent = '💖';
+  heart.style.left = Math.random() * 100 + 'vw';
+  heart.style.animationDuration = 5 + Math.random() * 5 + 's';
+  heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+  heartsContainer.appendChild(heart);
+  setTimeout(() => heart.remove(), 10000);
+}
+setInterval(createHeart, 500);
+
+function nextQuiz(btn, correct) {
+  if (!correct) {
+    btn.style.background = "#ff3366";
+    btn.textContent = "Χμμ... Όχι 😅";
+    return;
+  }
+  document.getElementById("quiz" + currentQuiz).style.display = "none";
+  currentQuiz++;
+  const next = document.getElementById("quiz" + currentQuiz);
+  if (next) next.style.display = "block";
+  else startMain();
+}
+
+function startMain() {
+  document.getElementById("quizTitle").style.display = "none";
+  document.getElementById("mainQ").style.display = "block";
+}
+
+let lovePercent = 0;
+let yesCount = 0;
+let loveFill = document.getElementById("loveFill");
+let messages = [
+  "Ρεεε τωρα Σ’ αγαπώ ακόμα πιο πολύ 💞",
+  "ΑΑΑ ΔΕΝ ΤΟ ΠΙΣΤΕΥΩ ΤΟ ΠΑΤΗΣΕΣ 2Η ΦΟΡΑΑ?",
+  "ΡΕ Σ’ ΑΓΑΠΑΩΩΩ 💖",
+  "Εντάξει με έχεις πεθάνει ΣΤΑΜΑΤΑΑ 😍 ΣΕ ΛΑΤΡΕΥΩΩΩΩ",
+  "ΔΕΝ ΕΧΩ ΑΛΛΕΣ ΑΠΑΝΤΗΣΕΙΣ 😅 Σ’ ΕΥΧΑΡΙΣΤΩ ΠΟΥ ΕΦΤΑΣΕΣ ΜΕΧΡΙ ΕΔΩ ΧΙΧΙ 💞",
+  "ΡΕ ΦΤΑΝΕΙ ΣΟΥ ΕΙΠΑ ΔΕΝ ΥΠΑΡΧΕΙ ΑΛΛΗ ΑΠΑΝΤΗΣΗ ΧΑΧΑΧΑ 😂",
+  "ΤΩΡΑ ΟΝΤΩΣ ΕΙΝΑΙ ΤΕΛΕΥΤΑΙΟ ΧΑΧΑ 😘 Σ’ ΑΓΑΠΩ ΖΟΥΖΟΥΝΙ 💘"
+];
+
+function yesClicked() {
+  const music = document.getElementById("music");
+  music.play();
+
+  yesCount++;
+  lovePercent = Math.min(100, lovePercent + 20);
+  loveFill.style.width = lovePercent + "%";
+
+  if (yesCount <= messages.length) {
+    showFloatingMessage(messages[yesCount - 1]);
+    if (yesCount === messages.length) {
+      document.getElementById("secretBox").style.display = "block";
+    }
+  }
+}
+
+function showFloatingMessage(msg) {
+  const floating = document.createElement('div');
+  floating.className = 'floating-text';
+  floating.textContent = msg;
+  document.getElementById("mainQ").appendChild(floating);
+  setTimeout(() => floating.remove(), 4000);
+}
+function moveNo() 
+ { const btn = document.getElementById("noBtn"); 
+ btn.style.position = "absolute"; 
+ btn.style.left = Math.random() * 150 + "%"; 
+ btn.style.top = Math.random() * 150 + "%"; }
+
+
+function checkSecret() {
+  const input = document.getElementById("secretInput").value.trim().toLowerCase();
+  const msg = document.getElementById("secretMsg");
+  if (input === "ζουζουνι" || input === "zouzouni") {
+    msg.innerHTML = "Το βρηκεεεεςς μουτρακοο μουυ, σ’ αγαπωωω πολυυυυυ 💖";
+    document.getElementById("loveLetter").style.display = "block";
+    setTimeout(() => {
+      document.getElementById("gift").style.display = "block";
+    }, 1000);
+  } else {
+    msg.innerHTML = "Χμμ... Όχι αυτή δεν είναι η λέξη 😜";
+  }
+}
+
+function explodeHearts() {
+  for(let i=0;i<50;i++){
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.textContent = '💖';
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.top = Math.random() * 100 + 'vh';
+    heart.style.fontSize = (Math.random() * 30 + 10) + 'px';
+    heartsContainer.appendChild(heart);
+    setTimeout(() => heart.remove(), 5000);
+  }
+
+  // Εμφάνιση του χρονομέτρου όταν πατηθεί το δώρο
+  document.getElementById("countdown").style.display = "block";
+}
+
+function startCountdown() {
+  const startDate = new Date("2025-08-06T00:00:00");
+  setInterval(() => {
+    const now = new Date();
+    const diff = now - startDate;
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const minutes = Math.floor((diff / (1000*60)) % 60);
+    document.getElementById("countdown").textContent =
+      `Είμαστε μαζί εδώ και ${days} μέρες, ${hours} ώρες και ${minutes} λεπτά και ελπιζω για πολλα πολλα ακομα χρονια 💞`;
+  }, 1000);
+}
+startCountdown();
+</script>
+</body>
+</html>
